@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <title>Метро</title>
+    <link rel="stylesheet" href="css/app.css"/>
+</head>
+<body>
+    <header id="topbar">
+        <div id="chips">
+            <div class="chip" id="chipFrom">
+                <span class="chip-mark"></span>
+                <span class="chip-text">Откуда</span>
+                <button class="chip-x" aria-label="Очистить">&#x2715;</button>
+            </div>
+            <button id="swapBtn" aria-label="Поменять">&#x21C5;</button>
+            <div class="chip" id="chipTo">
+                <span class="chip-text">До:</span>
+                <button class="chip-add" aria-label="Выбрать">&#x2B;</button>
+                <button class="chip-x" aria-label="Очистить">&#x2715;</button>
+            </div>
+            <div id="cityTabs"></div>
+            <button id="themeBtn" aria-label="Тема">&#x263E;</button>
+        </div>
+    </header>
+
+    <div id="map">
+        <svg id="scheme" xmlns="http://www.w3.org/2000/svg"></svg>
+
+        <!-- route card -->
+        <div id="routeCard" class="sheet hidden">
+            <div class="route-head">
+                <div class="route-total"><span id="routeTotal"></span></div>
+                <div class="route-actions">
+                    <button id="routeClear" aria-label="Сбросить">&#x2715;</button>
+                    <button id="routeClose" aria-label="Закрыть">&#x2715;</button>
+                </div>
+            </div>
+            <div id="routeLegs"></div>
+        </div>
+
+        <!-- station sheet -->
+        <div id="stationSheet" class="sheet hidden">
+            <button class="grab" id="stClose" aria-label="Закрыть">&#x2715;</button>
+            <div id="stTitle"></div>
+            <div id="stLines"></div>
+            <div class="st-actions">
+                <button id="stFrom" class="accent">Отсюда</button>
+                <button id="stTo" class="accent">Сюда</button>
+            </div>
+        </div>
+
+        <!-- search sheet -->
+        <div id="searchSheet" class="hidden">
+            <div class="search-head">
+                <button id="searchBack" aria-label="Назад">&#x2190;</button>
+                <input id="searchInput" type="text" placeholder="Станция"/>
+            </div>
+            <div id="searchResults"></div>
+        </div>
+
+        <!-- loading -->
+        <div id="loading">
+            <div id="loadingText">Загрузка схемы…</div>
+        </div>
+    </div>
+
+    <script src="js/lib/metro.js"></script>
+    <script src="js/lib/scheme.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

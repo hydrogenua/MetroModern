@@ -1,0 +1,303 @@
+/*
+ * MetroModern — styles. Flexbox only (no CSS grid: EdgeHTML on W10M).
+ * Segoe MDL2 glyphs are used for icons (&#xE711; etc.) — native on W10M.
+ */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: "Segoe UI", sans-serif;
+    background: #ffffff;
+    color: #12161a;
+    font-size: 15px;
+    touch-action: none;             /* we handle all gestures ourselves */
+}
+
+button {
+    font-family: inherit;
+    border: none;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.hidden { display: none !important; }
+.muted { color: #8a9096; font-size: 13px; }
+
+/* ---------------- layout ---------------- */
+
+body { display: flex; flex-direction: column; }
+
+#topbar {
+    flex: none;
+    background: #ffffff;
+    border-bottom: 1px solid #eceef0;
+    padding: 8px 10px;
+    z-index: 10;
+}
+
+#chips { display: flex; align-items: center; }
+
+.chip {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    height: 44px;
+    background: #f2f3f5;
+    border-radius: 10px;
+    padding: 0 10px;
+    min-width: 0;
+}
+
+.chip .chip-text {
+    flex: 1 1 auto;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chip .chip-mark {
+    width: 10px; height: 10px;
+    border-radius: 5px;
+    margin-right: 8px;
+    background: #b6bcc2;
+    display: none;
+    flex: none;
+}
+
+.chip.filled .chip-text { font-weight: 600; }
+.chip.filled .chip-mark { display: block; }
+
+.chip-x {
+    flex: none;
+    display: none;
+    width: 32px; height: 32px;
+    font-size: 14px;
+    color: #8a9096;
+    border-radius: 16px;
+}
+
+.chip.filled .chip-x { display: block; }
+
+.chip-add {
+    flex: none;
+    display: block;
+    width: 32px; height: 32px;
+    font-size: 18px;
+    color: #2b7cff;
+    border-radius: 16px;
+}
+
+.chip.filled .chip-add { display: none; }
+
+#chipFrom:not(.filled) .chip-add { display: none; }
+
+#swapBtn {
+    flex: none;
+    width: 40px; height: 40px;
+    margin: 0 4px;
+    font-family: "Segoe MDL2 Assets";
+    font-size: 16px;
+    color: #2b7cff;
+    border-radius: 20px;
+}
+
+#cityTabs { display: flex; margin-left: 10px; flex: none; }
+
+.city-tab {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #8a9096;
+    border-radius: 8px;
+}
+
+.city-tab.active { color: #ffffff; background: #da2128; font-weight: 600; }
+
+#themeBtn {
+    flex: none;
+    width: 36px; height: 36px;
+    margin-left: 6px;
+    font-size: 16px;
+    color: #2b7cff;
+    border-radius: 18px;
+}
+
+/* ---------------- dark theme ---------------- */
+
+body.dark { background: #17191c; color: #e8eaed; }
+
+body.dark #topbar { background: #1f2226; border-bottom-color: #101214; }
+body.dark .chip { background: #2a2e33; }
+body.dark .chip-text { color: #e8eaed; }
+body.dark .chip-x { color: #9aa0a6; }
+body.dark .chip-add { color: #5c9dff; }
+body.dark .city-tab { color: #9aa0a6; }
+body.dark .city-tab.active { color: #ffffff; }
+body.dark #themeBtn { color: #ffd75e; }
+
+body.dark #map { background: #17191c; }
+body.dark #scheme { filter: invert(0.91) hue-rotate(180deg); }
+
+body.dark .sheet { background: #1f2226; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); }
+body.dark .muted { color: #9aa0a6; }
+body.dark .route-actions button { color: #9aa0a6; }
+body.dark .leg .leg-dirs { color: #c9cdd1; }
+body.dark .grab { color: #9aa0a6; }
+body.dark .st-actions button { background: #2a2e33; color: #e8eaed; }
+body.dark .st-actions .accent { background: #2b7cff; color: #ffffff; }
+body.dark #searchSheet { background: #1f2226; }
+body.dark .search-head { border-bottom-color: #101214; }
+body.dark #searchInput { background: #2a2e33; color: #e8eaed; }
+body.dark .result { border-bottom-color: #26292d; }
+body.dark #loading { background: #17191c; color: #9aa0a6; }
+
+/* ---------------- map ---------------- */
+
+#map {
+    flex: 1 1 auto;
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+#scheme {
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    display: block;
+    pointer-events: none;   /* gestures live on #map; skip SVG hit-testing of ~1k nodes */
+}
+
+#scheme text { font-family: "Segoe UI", Arial, sans-serif; }
+
+#labels-out text { paint-order: stroke; }  /* harmless if unsupported: halo drawn behind anyway */
+
+/* ---------------- sheets & cards ---------------- */
+
+.sheet {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    background: #ffffff;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 20px rgba(18, 22, 26, 0.14);
+    padding: 14px 16px 18px;
+    z-index: 20;
+    max-height: 55%;
+    overflow-y: auto;
+}
+
+/* route card */
+.route-head { display: flex; align-items: center; margin-bottom: 6px; }
+.route-total { flex: 1 1 auto; font-size: 22px; font-weight: 700; }
+.route-actions button {
+    width: 40px; height: 40px;
+    font-family: "Segoe MDL2 Assets";
+    font-size: 16px; color: #8a9096;
+}
+
+.leg { display: flex; margin: 10px 0; }
+.leg .bar { flex: none; width: 5px; border-radius: 3px; margin-right: 12px; }
+.leg .leg-line { font-weight: 600; font-size: 15px; }
+.leg .leg-dirs { font-size: 14px; margin-top: 2px; }
+.leg.transfer { color: #8a9096; font-size: 14px; align-items: center; }
+.leg .walk { font-size: 18px; margin-right: 8px; }
+
+/* station sheet */
+.grab {
+    position: absolute; right: 10px; top: 10px;
+    width: 40px; height: 40px;
+    font-family: "Segoe MDL2 Assets";
+    color: #8a9096;
+}
+#stTitle { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+#stLines { margin-bottom: 12px; }
+.line-badge {
+    display: inline-block;
+    min-width: 26px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    margin-right: 6px;
+}
+.st-actions { display: flex; }
+.st-actions button {
+    flex: 1;
+    height: 44px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-right: 10px;
+    background: #f2f3f5;
+}
+.st-actions button:last-child { margin-right: 0; }
+.st-actions .accent { background: #2b7cff; color: #ffffff; }
+
+/* search sheet */
+#searchSheet {
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    background: #ffffff;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+}
+.search-head {
+    flex: none;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eceef0;
+}
+#searchBack {
+    width: 40px; height: 40px;
+    font-family: "Segoe MDL2 Assets";
+    color: #2b7cff;
+    font-size: 16px;
+}
+#searchInput {
+    flex: 1;
+    height: 40px;
+    border: none;
+    outline: none;
+    font-family: inherit;
+    font-size: 17px;
+    background: #f2f3f5;
+    border-radius: 10px;
+    padding: 0 12px;
+    color: #12161a;
+}
+#searchResults { flex: 1 1 auto; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+.result {
+    display: flex;
+    align-items: center;
+    padding: 13px 16px;
+    border-bottom: 1px solid #f2f3f5;
+    font-size: 16px;
+}
+.result .dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 5px;
+    margin-right: 6px;
+    flex: none;
+}
+.result .rname { margin-left: 4px; }
+
+/* loading */
+#loading {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background: #ffffff;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8a9096;
+    font-size: 15px;
+}

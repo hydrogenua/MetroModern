@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+    xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+    xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+    xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
+
+    <Identity Name="MetroModern"
+              Publisher="CN=MetroModern Dev"
+              Version="1.0.4.0" />
+
+    <mp:PhoneIdentity PhoneProductId="b3ac27b0-77f9-41c5-ab60-f9d334580a25"
+                      PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+
+    <Properties>
+        <DisplayName>Метро</DisplayName>
+        <PublisherDisplayName>MetroModern</PublisherDisplayName>
+        <Logo>assets\StoreLogo.scale-100.png</Logo>
+    </Properties>
+
+    <Dependencies>
+        <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.10240.0" MaxVersionTested="10.0.15254.0" />
+    </Dependencies>
+
+    <Resources>
+        <Resource Language="ru-RU" />
+    </Resources>
+
+    <Applications>
+        <Application Id="App" StartPage="default.html">
+            <uap:VisualElements
+                DisplayName="Метро"
+                Description="Современный Яндекс.Метро для Windows 10 Mobile"
+                BackgroundColor="#da2128"
+                Square150x150Logo="assets\Square150x150Logo.scale-100.png"
+                Square44x44Logo="assets\Square44x44Logo.scale-100.png">
+                <uap:SplashScreen Image="assets\SplashScreen.scale-100.png" BackgroundColor="#da2128" />
+            </uap:VisualElements>
+        </Application>
+    </Applications>
+
+    <Capabilities>
+        <Capability Name="internetClient" />
+    </Capabilities>
+</Package>

@@ -1,0 +1,18 @@
+# Yandex scheme dumps: copyright of Yandex, not for redistribution.
+# Dump your own copy: powershell -File tools\dump-metro.ps1
+data/*.json
+data/*.gz
+src/MetroModern.Web/js/data/*.json
+
+# build artifacts, packages and secrets (signing keys!)
+build/
+out/
+*.user
+*.pfx
+*.appx
+*.appxbundle
+
+# .NET build dirs
+bin/
+obj/
+src/MetroModern.Uwp/Assets/schemes/*.gz
