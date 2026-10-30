@@ -20,7 +20,7 @@
                 <button class="chip-add" aria-label="Выбрать">&#x2B;</button>
                 <button class="chip-x" aria-label="Очистить">&#x2715;</button>
             </div>
-            <div id="cityTabs"></div>
+            <select id="citySelect" aria-label="Город"></select>
             <button id="themeBtn" aria-label="Тема">&#x263E;</button>
         </div>
     </header>
@@ -33,8 +33,7 @@
             <div class="route-head">
                 <div class="route-total"><span id="routeTotal"></span></div>
                 <div class="route-actions">
-                    <button id="routeClear" aria-label="Сбросить">&#x2715;</button>
-                    <button id="routeClose" aria-label="Закрыть">&#x2715;</button>
+                    <button id="routeClose" aria-label="Убрать маршрут">&#x2715;</button>
                 </div>
             </div>
             <div id="routeLegs"></div>
@@ -66,6 +65,7 @@
         </div>
     </div>
 
+    <script src="js/data/cities.js"></script>
     <script src="js/lib/metro.js"></script>
     <script src="js/lib/scheme.js"></script>
     <script src="js/app.js"></script>
