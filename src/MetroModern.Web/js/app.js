@@ -593,12 +593,12 @@
     function renderCitySelect() {
         var sel = $('citySelect');
         if (!sel) return;
-        var html = '';
+        // never innerHTML a <select>: legacy EdgeHTML crashes WWAHost on it
+        while (sel.options.length) sel.remove(0);
         CITIES.forEach(function (c) {
-            html += '<option value="' + c.id + '"' + (c.id === state.city ? ' selected' : '') + '>' +
-                escapeHtml(c.name) + '</option>';
+            var o = new Option(c.name, c.id, c.id === state.city, c.id === state.city);
+            sel.add(o);
         });
-        sel.innerHTML = html;
     }
 
     function init() {

@@ -32,18 +32,31 @@ function Fill-MetroM([System.Drawing.Graphics]$g, [float]$ox, [float]$oy, [float
     }
 }
 
-# full-bleed white square + red metro M (the M body spans x 14..86, y 18..79 of the box)
+# rounded red tile + white metro M (the proven-safe drawing ops from v1.0.4)
 function New-Tile([int]$size, [string]$name) {
     $bmp = New-Object System.Drawing.Bitmap($size, $size)
     $g = [System.Drawing.Graphics]::FromImage($bmp)
     $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
-    $g.Clear([System.Drawing.Color]::White)
+    $g.Clear([System.Drawing.Color]::Transparent)
+    $r = [int]($size * 0.18)
+    $rect = New-Object System.Drawing.Rectangle(0, 0, $size, $size)
+    $path = New-Object System.Drawing.Drawing2D.GraphicsPath
+    $d = $r * 2
+    $path.AddArc($rect.X, $rect.Y, $d, $d, 180, 90)
+    $path.AddArc($rect.Right - $d, $rect.Y, $d, $d, 270, 90)
+    $path.AddArc($rect.Right - $d, $rect.Bottom - $d, $d, $d, 0, 90)
+    $path.AddArc($rect.X, $rect.Bottom - $d, $d, $d, 90, 90)
+    $path.CloseFigure()
     $redBrush = New-Object System.Drawing.SolidBrush($red)
-    Fill-MetroM $g ($size * 0.03) ($size * 0.055) ($size * 0.94) $redBrush
+    $g.FillPath($redBrush, $path)
+    $whiteBrush = New-Object System.Drawing.SolidBrush($white)
+    Fill-MetroM $g ($size * 0.14) ($size * 0.10) ($size * 0.72) $whiteBrush
     $g.Dispose()
     $bmp.Save((Join-Path $outDir $name), [System.Drawing.Imaging.ImageFormat]::Png)
     $bmp.Dispose()
+    $path.Dispose()
     $redBrush.Dispose()
+    $whiteBrush.Dispose()
     Write-Host "OK $name ($size px)"
 }
 
@@ -51,16 +64,16 @@ New-Tile 44  'Square44x44Logo.scale-100.png'
 New-Tile 150 'Square150x150Logo.scale-100.png'
 New-Tile 50  'StoreLogo.scale-100.png'
 
-# splash: white bg + big red metro M
+# splash: red bg + big white metro M (v1.0.4-proven ops, all-positive coords)
 $bmp = New-Object System.Drawing.Bitmap(620, 300)
 $g = [System.Drawing.Graphics]::FromImage($bmp)
 $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
-$g.Clear([System.Drawing.Color]::White)
-$redBrush = New-Object System.Drawing.SolidBrush($red)
-Fill-MetroM $g 126 -29 369 $redBrush
+$g.Clear($red)
+$whiteBrush = New-Object System.Drawing.SolidBrush($white)
+Fill-MetroM $g 130 20 360 $whiteBrush
 $g.Dispose()
 $bmp.Save((Join-Path $outDir 'SplashScreen.scale-100.png'), [System.Drawing.Imaging.ImageFormat]::Png)
 $bmp.Dispose()
-$redBrush.Dispose()
+$whiteBrush.Dispose()
 Write-Host 'OK SplashScreen.scale-100.png (620x300)'
 Write-Host "done -> $outDir"
