@@ -7,11 +7,9 @@
 
     /* ---------------- state ---------------- */
 
-    // v1.0.7 ships Moscow + SPb data only: W10M was crashing with the other
-    // cities' schemes in the package (their dumps stay in ../data for later)
     var CITIES = [
-        { name: 'Москва', alias: 'moscow' },
-        { name: 'Санкт-Петербург', alias: 'saint-petersburg' }
+        { id: 'saint-petersburg', short: 'СПб', file: 'saint-petersburg' },
+        { id: 'moscow', short: 'Москва', file: 'moscow' }
     ];
 
     var state = {
@@ -547,8 +545,6 @@
         return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    /* ---------------- init ---------------- */
-
     function openStationSheet(st) {
         var sheet = $('stationSheet');
         var lineNames = (st.lineIds || []).map(function (lid) {
@@ -590,15 +586,13 @@
 
     /* ---------------- init ---------------- */
 
-    function renderCitySelect() {
-        var sel = $('citySelect');
-        if (!sel) return;
-        // never innerHTML a <select>: legacy EdgeHTML crashes WWAHost on it
-        while (sel.options.length) sel.remove(0);
+    function renderCityTabs() {
+        var html = '';
         CITIES.forEach(function (c) {
-            var o = new Option(c.name, c.id, c.id === state.city, c.id === state.city);
-            sel.add(o);
+            html += '<button class="city-tab' + (c.id === state.city ? ' active' : '') +
+                '" data-city="' + c.id + '">' + c.short + '</button>';
         });
+        $('cityTabs').innerHTML = html;
     }
 
     function init() {
@@ -628,11 +622,12 @@
         try { saved = localStorage.getItem('mm.city'); } catch (e) { }
         var cityId = saved || CITIES[0].id;
 
-        renderCitySelect();
+        renderCityTabs();
 
-        $('citySelect').addEventListener('change', function () {
-            if (this.value === state.city) return;
-            switchCity(this.value);
+        $('cityTabs').addEventListener('click', function (e) {
+            var btn = closestClass(e.target, 'city-tab');
+            if (!btn || btn.dataset.city === state.city) return;
+            switchCity(btn.dataset.city);
         });
 
         bindMapEvents();
@@ -675,6 +670,9 @@
         });
 
         $('routeClose').addEventListener('click', function () {
+            $('routeCard').classList.add('hidden');
+        });
+        $('routeClear').addEventListener('click', function () {
             setFrom(null); setTo(null);
         });
 
@@ -690,7 +688,7 @@
                 $('loadingText').textContent = 'Ошибка загрузки: ' + err.message;
                 return;
             }
-            renderCitySelect();
+            renderCityTabs();
             var svg = $('scheme');
             state.handles = MetroScheme.renderScheme(state.net, state.sd, svg);
 
@@ -722,7 +720,6 @@
                 }
                 applyViewNow();
                 restoreSelection();
-                // deferred: auto-fill the route start with the nearest station
                 $('loading').classList.add('hidden');
             });
         });

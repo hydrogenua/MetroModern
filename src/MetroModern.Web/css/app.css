@@ -104,19 +104,16 @@ body { display: flex; flex-direction: column; }
     border-radius: 20px;
 }
 
-#citySelect {
-    flex: none;
-    margin-left: 10px;
-    height: 38px;
-    max-width: 140px;
-    background: #f2f3f5;
-    color: #12161a;
-    border: none;
-    border-radius: 8px;
-    font-family: inherit;
+#cityTabs { display: flex; margin-left: 10px; flex: none; }
+
+.city-tab {
+    padding: 8px 12px;
     font-size: 14px;
-    padding: 0 4px;
+    color: #8a9096;
+    border-radius: 8px;
 }
+
+.city-tab.active { color: #ffffff; background: #da2128; font-weight: 600; }
 
 #themeBtn {
     flex: none;
@@ -136,7 +133,8 @@ body.dark .chip { background: #2a2e33; }
 body.dark .chip-text { color: #e8eaed; }
 body.dark .chip-x { color: #9aa0a6; }
 body.dark .chip-add { color: #5c9dff; }
-body.dark #citySelect { background: #2a2e33; color: #e8eaed; }
+body.dark .city-tab { color: #9aa0a6; }
+body.dark .city-tab.active { color: #ffffff; }
 body.dark #themeBtn { color: #ffd75e; }
 
 body.dark #map { background: #17191c; }
@@ -260,12 +258,6 @@ body.dark #loading { background: #17191c; color: #9aa0a6; }
     font-family: "Segoe MDL2 Assets";
     color: #2b7cff;
     font-size: 16px;
-}
-#locBtn {
-    width: 40px; height: 40px;
-    color: #2b7cff;
-    font-size: 17px;
-    flex: none;
 }
 #searchInput {
     flex: 1;

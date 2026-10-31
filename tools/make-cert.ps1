@@ -10,7 +10,7 @@ $scriptRoot = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $PS
 $certDir = Join-Path (Split-Path -Parent $scriptRoot) 'build\cert'
 if (-not (Test-Path $certDir)) { New-Item -ItemType Directory -Path $certDir | Out-Null }
 
-$subject = 'CN=MetroModern Dev'
+$subject = 'CN=MetroModern Dev 2'
 
 # reuse an existing cert if present
 $existing = Get-ChildItem Cert:\CurrentUser\My | Where-Object { $_.Subject -eq $subject -and $_.HasPrivateKey } |
