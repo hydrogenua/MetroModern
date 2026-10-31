@@ -136,8 +136,6 @@ body.dark .chip { background: #2a2e33; }
 body.dark .chip-text { color: #e8eaed; }
 body.dark .chip-x { color: #9aa0a6; }
 body.dark .chip-add { color: #5c9dff; }
-body.dark .city-tab { color: #9aa0a6; }
-body.dark .city-tab.active { color: #ffffff; }
 body.dark #citySelect { background: #2a2e33; color: #e8eaed; }
 body.dark #themeBtn { color: #ffd75e; }
 

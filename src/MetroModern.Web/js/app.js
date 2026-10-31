@@ -12,7 +12,7 @@
         { name: 'Санкт-Петербург', alias: 'saint-petersburg' },
         { name: 'Москва', alias: 'moscow' }
     ]).map(function (c) {
-        return { name: c.name, id: c.alias, file: c.alias };
+        return { id: c.alias, name: c.name, file: c.alias };
     });
 
     var state = {
@@ -587,10 +587,48 @@
         if (state.from && state.to) updateRoute();
     }
 
+    /* ---------------- geolocation: nearest station ---------------- */
+
+    function distGeoKm(a, b) {
+        var R = 6371, toRad = Math.PI / 180;
+        var dLat = (b.lat - a.lat) * toRad, dLon = (b.lon - a.lon) * toRad;
+        var s = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(a.lat * toRad) * Math.cos(b.lat * toRad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+    }
+
+    function nearestStationGeo(lat, lon) {
+        var best = null, bestD = 1e12;
+        var stations = state.net.stations;
+        for (var i = 0; i < stations.length; i++) {
+            var st = stations[i];
+            if (st.lat === null) continue;
+            var d = distGeoKm({ lat: lat, lon: lon }, { lat: st.lat, lon: st.lon });
+            if (d < bestD) { bestD = d; best = st; }
+        }
+        return best;
+    }
+
+    /* auto-pick the closest station as the route start (until the user chooses one) */
+    function locateNearest() {
+        if (state.from || !navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition(function (pos) {
+            if (state.from) return; // the user already picked one
+            var st = nearestStationGeo(pos.coords.latitude, pos.coords.longitude);
+            if (st && st.lat !== null) {
+                setFrom(st);
+                persistSelection();
+            }
+        }, function () { /* no location consent - stay manual */ }, {
+            timeout: 9000, maximumAge: 120000, enableHighAccuracy: false
+        });
+    }
+
     /* ---------------- init ---------------- */
 
     function renderCitySelect() {
         var sel = $('citySelect');
+        if (!sel) return;
         var html = '';
         CITIES.forEach(function (c) {
             html += '<option value="' + c.id + '"' + (c.id === state.city ? ' selected' : '') + '>' +
@@ -720,6 +758,7 @@
                 }
                 applyViewNow();
                 restoreSelection();
+                locateNearest();
                 $('loading').classList.add('hidden');
             });
         });

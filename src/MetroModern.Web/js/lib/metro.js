@@ -48,10 +48,15 @@
                 name: s.name || '',
                 x: 0, y: 0,          // scheme pixel position (from marker graphics group)
                 hasPos: false,
+                lat: null, lon: null, // geographic position (data order: [lon, lat])
                 nodes: [],
                 lineIds: [],
                 graphicsIds: s.graphicsIds || []
             };
+            if (s.coordinates && s.coordinates.length >= 2) {
+                st.lon = s.coordinates[0];
+                st.lat = s.coordinates[1];
+            }
             (s.stops || []).forEach(function (stop) {
                 if (!stop.nodeId) return;
                 var node = { id: stop.nodeId, lineId: stop.lineId, station: st };

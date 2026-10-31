@@ -12,12 +12,12 @@ $red = [System.Drawing.Color]::FromArgb(255, 218, 33, 40)   # #da2128
 $white = [System.Drawing.Color]::White
 
 # Moscow-metro "M" (sharp peaks, hanging center V, serif feet) in a 100x100 box (y down)
-$leftLeg  = @(20, 68, 36, 20, 40, 20, 33, 68)
-$rightLeg = @(60, 20, 64, 20, 80, 68, 67, 68)
-$vLeft    = @(32, 20, 40, 20, 50, 79)
-$vRight   = @(60, 20, 68, 20, 50, 79)
-$footL    = @(12, 68, 40, 68, 40, 75, 12, 75)
-$footR    = @(60, 68, 88, 68, 88, 75, 60, 75)
+$leftLeg  = @(13, 71, 37, 18, 44, 18, 31, 71)
+$rightLeg = @(56, 18, 63, 18, 87, 71, 69, 71)
+$vLeft    = @(38, 18, 46, 18, 50, 77)
+$vRight   = @(54, 18, 62, 18, 50, 77)
+$footL    = @(10, 71, 36, 71, 36, 80, 10, 80)
+$footR    = @(64, 71, 90, 71, 90, 80, 64, 80)
 $shapes   = @($leftLeg, $vLeft, $vRight, $rightLeg, $footL, $footR)
 
 function Fill-MetroM([System.Drawing.Graphics]$g, [float]$ox, [float]$oy, [float]$sz, [System.Drawing.Brush]$brush) {
@@ -32,18 +32,18 @@ function Fill-MetroM([System.Drawing.Graphics]$g, [float]$ox, [float]$oy, [float
     }
 }
 
-# full-bleed red square + white M centered (the M body spans x 12..88, y 20..79 of the box)
+# full-bleed white square + red metro M (the M body spans x 14..86, y 18..79 of the box)
 function New-Tile([int]$size, [string]$name) {
     $bmp = New-Object System.Drawing.Bitmap($size, $size)
     $g = [System.Drawing.Graphics]::FromImage($bmp)
     $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
-    $g.Clear($red)
-    $whiteBrush = New-Object System.Drawing.SolidBrush($white)
-    Fill-MetroM $g ($size * 0.079) ($size * 0.083) ($size * 0.842) $whiteBrush
+    $g.Clear([System.Drawing.Color]::White)
+    $redBrush = New-Object System.Drawing.SolidBrush($red)
+    Fill-MetroM $g ($size * 0.03) ($size * 0.055) ($size * 0.94) $redBrush
     $g.Dispose()
     $bmp.Save((Join-Path $outDir $name), [System.Drawing.Imaging.ImageFormat]::Png)
     $bmp.Dispose()
-    $whiteBrush.Dispose()
+    $redBrush.Dispose()
     Write-Host "OK $name ($size px)"
 }
 
@@ -51,16 +51,16 @@ New-Tile 44  'Square44x44Logo.scale-100.png'
 New-Tile 150 'Square150x150Logo.scale-100.png'
 New-Tile 50  'StoreLogo.scale-100.png'
 
-# splash: red bg + big white M
+# splash: white bg + big red metro M
 $bmp = New-Object System.Drawing.Bitmap(620, 300)
 $g = [System.Drawing.Graphics]::FromImage($bmp)
 $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
-$g.Clear($red)
-$whiteBrush = New-Object System.Drawing.SolidBrush($white)
-Fill-MetroM $g 112 -46 395 $whiteBrush
+$g.Clear([System.Drawing.Color]::White)
+$redBrush = New-Object System.Drawing.SolidBrush($red)
+Fill-MetroM $g 126 -29 369 $redBrush
 $g.Dispose()
 $bmp.Save((Join-Path $outDir 'SplashScreen.scale-100.png'), [System.Drawing.Imaging.ImageFormat]::Png)
 $bmp.Dispose()
-$whiteBrush.Dispose()
+$redBrush.Dispose()
 Write-Host 'OK SplashScreen.scale-100.png (620x300)'
 Write-Host "done -> $outDir"
