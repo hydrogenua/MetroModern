@@ -547,58 +547,6 @@
         return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    /* ---------------- geolocation: nearest station ---------------- */
-
-    function distGeoKm(a, b) {
-        var R = 6371, toRad = Math.PI / 180;
-        var dLat = (b.lat - a.lat) * toRad, dLon = (b.lon - a.lon) * toRad;
-        var s = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(a.lat * toRad) * Math.cos(b.lat * toRad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
-    }
-
-    function nearestStationGeo(lat, lon) {
-        var best = null, bestD = 1e12;
-        var stations = state.net.stations;
-        for (var i = 0; i < stations.length; i++) {
-            var st = stations[i];
-            if (st.lat === null) continue;
-            var d = distGeoKm({ lat: lat, lon: lon }, { lat: st.lat, lon: st.lon });
-            if (d < bestD) { bestD = d; best = st; }
-        }
-        return best;
-    }
-
-    /* pre-fills the route start with the closest station. Deferred and fully
-     * wrapped: geolocation at launch has to tiptoe on W10M. */
-    function locateNearest(target) {
-        target = target || 'from';
-        if (target === 'from' && state.from) return; // already chosen (saved or located)
-        var finished = false;
-        function apply(pos) {
-            if (finished) return;
-            finished = true;
-            try {
-                var st = nearestStationGeo(pos.coords.latitude, pos.coords.longitude);
-                if (!st || st.lat === null) return;
-                if (target === 'to') { setTo(st); } else { setFrom(st); }
-                persistSelection();
-                updateRoute();
-            } catch (e) { }
-        }
-        function fail() { finished = true; }
-        try {
-            if (window.Windows && Windows.Devices && Windows.Devices.Geolocation) {
-                var loc = new Windows.Devices.Geolocation.Geolocator();
-                loc.desiredAccuracy = Windows.Devices.Geolocation.PositionAccuracy.Default;
-                loc.getGeopositionAsync().then(apply, function () { finished = true; });
-            } else if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(apply, function () { finished = true; },
-                    { timeout: 9000, maximumAge: 120000, enableHighAccuracy: false });
-            }
-        } catch (e) { finished = true; }
-    }
-
     /* ---------------- init ---------------- */
 
     function openStationSheet(st) {
@@ -638,28 +586,6 @@
             if (t && t.name === toName) { state.to = t; setChip('to', t); }
         }
         if (state.from && state.to) updateRoute();
-    }
-
-    /* ---------------- geolocation: nearest station ---------------- */
-
-    function distGeoKm(a, b) {
-        var R = 6371, toRad = Math.PI / 180;
-        var dLat = (b.lat - a.lat) * toRad, dLon = (b.lon - a.lon) * toRad;
-        var s = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(a.lat * toRad) * Math.cos(b.lat * toRad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
-    }
-
-    function nearestStationGeo(lat, lon) {
-        var best = null, bestD = 1e12;
-        var stations = state.net.stations;
-        for (var i = 0; i < stations.length; i++) {
-            var st = stations[i];
-            if (st.lat === null) continue;
-            var d = distGeoKm({ lat: lat, lon: lon }, { lat: st.lat, lon: st.lon });
-            if (d < bestD) { bestD = d; best = st; }
-        }
-        return best;
     }
 
     /* ---------------- init ---------------- */
@@ -729,12 +655,6 @@
             renderSearchResults(this.value);
         });
         $('searchBack').addEventListener('click', closeSheets);
-        $('locBtn').addEventListener('click', function () {
-            var target = state.editTarget || 'from';
-            $('searchResults').innerHTML = '<div class="muted" style="padding:12px">Определяю расположение…</div>';
-            locateNearest(target);
-            setTimeout(closeSheets, 5000);
-        });
         $('searchResults').addEventListener('click', function (e) {
             var item = closestClass(e.target, 'result');
             if (!item) return;
@@ -803,7 +723,6 @@
                 applyViewNow();
                 restoreSelection();
                 // deferred: auto-fill the route start with the nearest station
-                setTimeout(function () { try { locateNearest('from'); } catch (e) { } }, 2500);
                 $('loading').classList.add('hidden');
             });
         });
