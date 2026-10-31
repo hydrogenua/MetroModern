@@ -261,6 +261,12 @@ body.dark #loading { background: #17191c; color: #9aa0a6; }
     color: #2b7cff;
     font-size: 16px;
 }
+#locBtn {
+    width: 40px; height: 40px;
+    color: #2b7cff;
+    font-size: 17px;
+    flex: none;
+}
 #searchInput {
     flex: 1;
     height: 40px;

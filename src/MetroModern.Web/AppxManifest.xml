@@ -6,7 +6,7 @@
 
     <Identity Name="MetroModern"
               Publisher="CN=MetroModern Dev"
-              Version="1.0.6.0" />
+              Version="1.0.7.0" />
 
     <mp:PhoneIdentity PhoneProductId="b3ac27b0-77f9-41c5-ab60-f9d334580a25"
                       PhonePublisherId="00000000-0000-0000-0000-000000000000" />
@@ -30,10 +30,10 @@
             <uap:VisualElements
                 DisplayName="Метро"
                 Description="Современный Яндекс.Метро для Windows 10 Mobile"
-                BackgroundColor="#ffffff"
+                BackgroundColor="#da2128"
                 Square150x150Logo="assets\Square150x150Logo.scale-100.png"
                 Square44x44Logo="assets\Square44x44Logo.scale-100.png">
-                <uap:SplashScreen Image="assets\SplashScreen.scale-100.png" BackgroundColor="#ffffff" />
+                <uap:SplashScreen Image="assets\SplashScreen.scale-100.png" BackgroundColor="#da2128" />
             </uap:VisualElements>
         </Application>
     </Applications>
