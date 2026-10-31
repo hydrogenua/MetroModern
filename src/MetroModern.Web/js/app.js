@@ -7,9 +7,11 @@
 
     /* ---------------- state ---------------- */
 
+    // v1.0.7 ships Moscow + SPb data only: W10M was crashing with the other
+    // cities' schemes in the package (their dumps stay in ../data for later)
     var CITIES = [
-        { id: 'saint-petersburg', short: 'СПб', file: 'saint-petersburg' },
-        { id: 'moscow', short: 'Москва', file: 'moscow' }
+        { name: 'Москва', alias: 'moscow' },
+        { name: 'Санкт-Петербург', alias: 'saint-petersburg' }
     ];
 
     var state = {
@@ -545,6 +547,60 @@
         return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
+    /* ---------------- geolocation: nearest station ---------------- */
+
+    function distGeoKm(a, b) {
+        var R = 6371, toRad = Math.PI / 180;
+        var dLat = (b.lat - a.lat) * toRad, dLon = (b.lon - a.lon) * toRad;
+        var s = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(a.lat * toRad) * Math.cos(b.lat * toRad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+    }
+
+    function nearestStationGeo(lat, lon) {
+        var best = null, bestD = 1e12;
+        var stations = state.net.stations;
+        for (var i = 0; i < stations.length; i++) {
+            var st = stations[i];
+            if (st.lat === null) continue;
+            var d = distGeoKm({ lat: lat, lon: lon }, { lat: st.lat, lon: st.lon });
+            if (d < bestD) { bestD = d; best = st; }
+        }
+        return best;
+    }
+
+    /* pre-fills the route start with the closest station. User-triggered only:
+     * geolocation at launch crashes WWAHost on W10M sideloaded apps. */
+    function locateNearest(target) {
+        target = target || 'from';
+        if (target === 'from' && state.from) return;
+        var finished = false;
+        function apply(pos) {
+            if (finished) return;
+            finished = true;
+            try {
+                var st = nearestStationGeo(pos.coords.latitude, pos.coords.longitude);
+                if (!st || st.lat === null) return;
+                if (target === 'to') { setTo(st); } else { setFrom(st); }
+                persistSelection();
+                updateRoute();
+            } catch (e) { }
+        }
+        function fail() { finished = true; }
+        try {
+            if (window.Windows && Windows.Devices && Windows.Devices.Geolocation) {
+                var loc = new Windows.Devices.Geolocation.Geolocator();
+                loc.desiredAccuracy = Windows.Devices.Geolocation.PositionAccuracy.Default;
+                loc.getGeopositionAsync().then(apply, function () { finished = true; });
+            } else if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(apply, function () { finished = true; },
+                    { timeout: 9000, maximumAge: 120000, enableHighAccuracy: false });
+            }
+        } catch (e) { finished = true; }
+    }
+
+    /* ---------------- init ---------------- */
+
     function openStationSheet(st) {
         var sheet = $('stationSheet');
         var lineNames = (st.lineIds || []).map(function (lid) {
@@ -586,13 +642,15 @@
 
     /* ---------------- init ---------------- */
 
-    function renderCityTabs() {
-        var html = '';
+    function renderCitySelect() {
+        var sel = $('citySelect');
+        if (!sel) return;
+        // never innerHTML a <select>: legacy EdgeHTML crashes WWAHost on it
+        while (sel.options.length) sel.remove(0);
         CITIES.forEach(function (c) {
-            html += '<button class="city-tab' + (c.id === state.city ? ' active' : '') +
-                '" data-city="' + c.id + '">' + c.short + '</button>';
+            var o = new Option(c.name, c.id, c.id === state.city, c.id === state.city);
+            sel.add(o);
         });
-        $('cityTabs').innerHTML = html;
     }
 
     function init() {
@@ -622,12 +680,11 @@
         try { saved = localStorage.getItem('mm.city'); } catch (e) { }
         var cityId = saved || CITIES[0].id;
 
-        renderCityTabs();
+        renderCitySelect();
 
-        $('cityTabs').addEventListener('click', function (e) {
-            var btn = closestClass(e.target, 'city-tab');
-            if (!btn || btn.dataset.city === state.city) return;
-            switchCity(btn.dataset.city);
+        $('citySelect').addEventListener('change', function () {
+            if (this.value === state.city) return;
+            switchCity(this.value);
         });
 
         bindMapEvents();
@@ -650,6 +707,12 @@
             renderSearchResults(this.value);
         });
         $('searchBack').addEventListener('click', closeSheets);
+        $('locBtn').addEventListener('click', function () {
+            var target = state.editTarget || 'from';
+            $('searchResults').innerHTML = '<div class="muted" style="padding:12px">Определяю расположение…</div>';
+            locateNearest(target);
+            setTimeout(closeSheets, 6000);
+        });
         $('searchResults').addEventListener('click', function (e) {
             var item = closestClass(e.target, 'result');
             if (!item) return;
@@ -670,9 +733,6 @@
         });
 
         $('routeClose').addEventListener('click', function () {
-            $('routeCard').classList.add('hidden');
-        });
-        $('routeClear').addEventListener('click', function () {
             setFrom(null); setTo(null);
         });
 
@@ -688,7 +748,7 @@
                 $('loadingText').textContent = 'Ошибка загрузки: ' + err.message;
                 return;
             }
-            renderCityTabs();
+            renderCitySelect();
             var svg = $('scheme');
             state.handles = MetroScheme.renderScheme(state.net, state.sd, svg);
 
@@ -720,6 +780,7 @@
                 }
                 applyViewNow();
                 restoreSelection();
+                // deferred: auto-fill the route start with the nearest station
                 $('loading').classList.add('hidden');
             });
         });

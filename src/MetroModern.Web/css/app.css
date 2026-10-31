@@ -104,16 +104,19 @@ body { display: flex; flex-direction: column; }
     border-radius: 20px;
 }
 
-#cityTabs { display: flex; margin-left: 10px; flex: none; }
-
-.city-tab {
-    padding: 8px 12px;
-    font-size: 14px;
-    color: #8a9096;
+#citySelect {
+    flex: none;
+    margin-left: 10px;
+    height: 38px;
+    max-width: 140px;
+    background: #f2f3f5;
+    color: #12161a;
+    border: none;
     border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    padding: 0 4px;
 }
-
-.city-tab.active { color: #ffffff; background: #da2128; font-weight: 600; }
 
 #themeBtn {
     flex: none;
@@ -133,8 +136,7 @@ body.dark .chip { background: #2a2e33; }
 body.dark .chip-text { color: #e8eaed; }
 body.dark .chip-x { color: #9aa0a6; }
 body.dark .chip-add { color: #5c9dff; }
-body.dark .city-tab { color: #9aa0a6; }
-body.dark .city-tab.active { color: #ffffff; }
+body.dark #citySelect { background: #2a2e33; color: #e8eaed; }
 body.dark #themeBtn { color: #ffd75e; }
 
 body.dark #map { background: #17191c; }
@@ -259,6 +261,12 @@ body.dark #loading { background: #17191c; color: #9aa0a6; }
     color: #2b7cff;
     font-size: 16px;
 }
+#locBtn {
+    width: 40px; height: 40px;
+    color: #2b7cff;
+    font-size: 17px;
+    flex: none;
+}
 #searchInput {
     flex: 1;
     height: 40px;
@@ -300,4 +308,50 @@ body.dark #loading { background: #17191c; color: #9aa0a6; }
     justify-content: center;
     color: #8a9096;
     font-size: 15px;
+}
+
+/* ---------------- bottom bar (city + theme) ---------------- */
+
+#bottombar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    background: #1f2226;
+    border-top: 1px solid #101214;
+    padding: 6px 10px;
+    z-index: 5;
+}
+
+#bottombar #citySelect {
+    flex: 1 1 auto;
+    margin-left: 0;
+    height: 38px;
+    max-width: none;
+    background: #2a2e33;
+    color: #e8eaed;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    padding: 0 6px;
+}
+
+#bottombar .bb-spacer { flex: none; width: 10px; }
+
+#bottombar #themeBtn {
+    flex: none;
+    width: 38px; height: 38px;
+    margin-left: 10px;
+    font-size: 16px;
+    color: #ffd75e;
+    border-radius: 19px;
+}
+
+body:not(.dark) #bottombar {
+    background: #f2f3f5;
+    border-top-color: #e0e3e6;
+}
+body:not(.dark) #bottombar #citySelect {
+    background: #ffffff;
+    color: #12161a;
 }
