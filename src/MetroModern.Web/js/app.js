@@ -675,10 +675,12 @@
         });
         if (theme === 'dark') $('themeBtn').innerHTML = '\u2600';
 
-        // restore city
+        // restore city (only if it has bundled data in this package)
         var saved = null;
         try { saved = localStorage.getItem('mm.city'); } catch (e) { }
-        var cityId = saved || CITIES[0].id;
+        var hasData = false;
+        for (var ci = 0; ci < CITIES.length; ci++) if (CITIES[ci].id === saved) hasData = true;
+        var cityId = hasData ? saved : CITIES[0].id;
 
         renderCitySelect();
 
@@ -707,11 +709,6 @@
             renderSearchResults(this.value);
         });
         $('searchBack').addEventListener('click', closeSheets);
-        $('locBtn').addEventListener('click', function () {
-            var target = state.editTarget || 'from';
-            $('searchResults').innerHTML = '<div class="muted" style="padding:12px">Определяю расположение…</div>';
-            locateNearest(target);
-            setTimeout(closeSheets, 6000);
         });
         $('searchResults').addEventListener('click', function (e) {
             var item = closestClass(e.target, 'result');

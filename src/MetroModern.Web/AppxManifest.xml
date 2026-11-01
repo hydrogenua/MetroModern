@@ -6,7 +6,7 @@
 
     <Identity Name="MetroModern"
               Publisher="CN=MetroModern Dev 2"
-              Version="3.1.0.0" />
+              Version="1.0.15.0" />
 
     <mp:PhoneIdentity PhoneProductId="b3ac27b0-77f9-41c5-ab60-f9d334580a25"
                       PhonePublisherId="00000000-0000-0000-0000-000000000000" />
