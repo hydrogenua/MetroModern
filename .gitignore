@@ -16,3 +16,4 @@ out/
 bin/
 obj/
 src/MetroModern.Uwp/Assets/schemes/*.gz
+pm.json
