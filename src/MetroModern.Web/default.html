@@ -20,8 +20,6 @@
                 <button class="chip-add" aria-label="Выбрать">&#x2B;</button>
                 <button class="chip-x" aria-label="Очистить">&#x2715;</button>
             </div>
-            <div id="cityTabs"></div>
-            <button id="themeBtn" aria-label="Тема">&#x263E;</button>
         </div>
     </header>
 
@@ -33,7 +31,7 @@
             <div class="route-head">
                 <div class="route-total"><span id="routeTotal"></span></div>
                 <div class="route-actions">
-                    <button id="routeClear" aria-label="Сбросить">&#x2715;</button>
+
                     <button id="routeClose" aria-label="Закрыть">&#x2715;</button>
                 </div>
             </div>
@@ -56,8 +54,16 @@
             <div class="search-head">
                 <button id="searchBack" aria-label="Назад">&#x2190;</button>
                 <input id="searchInput" type="text" placeholder="Станция"/>
+                <button id="locBtn" aria-label="Рядом со мной" title="Рядом со мной">&#x1F4CD;</button>
             </div>
             <div id="searchResults"></div>
+        </div>
+
+        <!-- bottom bar: city + theme -->
+        <div id="bottombar">
+            <select id="citySelect" aria-label="Город"></select>
+            <div class="bb-spacer"></div>
+            <button id="themeBtn" aria-label="Тема">&#x263E;</button>
         </div>
 
         <!-- loading -->
